@@ -1,0 +1,130 @@
+<div class="sales-order-container">
+  <!-- Header -->
+  <header class="sales-order-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
+      <h1>Sales Order Data</h1>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="sales-order-main">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="summary-icon">📋</div>
+        <div class="summary-content">
+          <h3>Total Orders</h3>
+          <p>{{ totalOrders }}</p>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">📦</div>
+        <div class="summary-content">
+          <h3>Total Quantity</h3>
+          <p>{{ totalQuantity.toFixed(1) }}</p>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">👤</div>
+        <div class="summary-content">
+          <h3>Customer ID</h3>
+          <p>{{ customerId }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="filters-header">
+        <h2>Filters</h2>
+        <button class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+      </div>
+      <div class="filters-content">
+        <div class="filter-group">
+          <label for="currency-filter">Currency:</label>
+          <select id="currency-filter" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
+            <option *ngFor="let currency of currencies" [value]="currency">
+              {{ currency }}
+            </option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="material-filter">Material:</label>
+          <select id="material-filter" [(ngModel)]="selectedMaterial" (change)="onMaterialChange()">
+            <option *ngFor="let material of materials" [value]="material">
+              {{ material }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Section -->
+    <div class="data-section">
+      <div class="section-header">
+        <h2>Sales Order Details</h2>
+        <div class="header-actions">
+          <span class="filtered-count">Showing {{ filteredData.length }} of {{ salesOrderData.length }} records</span>
+          <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+            🔄 Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-section">
+        <div class="loading-spinner"></div>
+        <p>Loading sales order data...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="errorMessage && !isLoading" class="error-section">
+        <div class="error-icon">⚠️</div>
+        <h3>Error Loading Data</h3>
+        <p>{{ errorMessage }}</p>
+        <button class="retry-btn" (click)="refreshData()">Retry</button>
+      </div>
+
+      <!-- Data Table -->
+      <div *ngIf="filteredData.length > 0 && !isLoading && !errorMessage" class="table-container">
+        <table class="sales-order-table">
+          <thead>
+            <tr>
+              <th>Order No.</th>
+              <th>Date</th>
+              <th>Material</th>
+              <th>Description</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Currency</th>
+              <th>Net Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredData; trackBy: trackByVBELN">
+              <td>{{ item.VBELN }}</td>
+              <td>{{ formatDate(item.ERDAT) }}</td>
+              <td>{{ item.MATNR }}</td>
+              <td>{{ item.ARKTX }}</td>
+              <td>{{ item.KWMENG }}</td>
+              <td>{{ item.MEINS }}</td>
+              <td>{{ item.WAERK }}</td>
+              <td class="amount">{{ formatCurrency(item.NETWR) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Data State -->
+      <div *ngIf="filteredData.length === 0 && !isLoading && !errorMessage" class="no-data-section">
+        <div class="no-data-icon">📋</div>
+        <h3>No Sales Order Data Available</h3>
+        <p *ngIf="salesOrderData.length > 0">No records match the current filters.</p>
+        <p *ngIf="salesOrderData.length === 0">There are no sales order records for this customer.</p>
+        <button *ngIf="salesOrderData.length > 0" class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+      </div>
+    </div>
+  </main>
+</div> 

@@ -1,0 +1,98 @@
+<div class="overall-sales-container">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">
+        <span class="back-icon">←</span>
+        Back to Dashboard
+      </button>
+      <h1>Overall Sales Data</h1>
+      <div class="customer-info" *ngIf="customerId">
+        <span class="customer-id">Customer ID: {{ customerId }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading overall sales data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !loading">
+    <div class="error-icon">⚠️</div>
+    <h3>Error Loading Data</h3>
+    <p>{{ error }}</p>
+    <button class="retry-btn" (click)="loadOverallSales()">Retry</button>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content" *ngIf="!loading && !error">
+    <!-- Summary Cards -->
+    <div class="summary-cards" *ngIf="overallSales.length > 0">
+      <div class="summary-card total-count">
+        <div class="card-icon">📊</div>
+        <div class="card-content">
+          <h3>Total Count</h3>
+          <div class="card-value">{{ overallSales[0]?.TotalCount || 0 }}</div>
+        </div>
+      </div>
+
+      <div class="summary-card total-amount">
+        <div class="card-icon">💰</div>
+        <div class="card-content">
+          <h3>Total Amount</h3>
+          <div class="card-value">
+            {{ formatCurrency(overallSales[0]?.TotalAmount || 0, overallSales[0]?.Currency || 'USD') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-card currency">
+        <div class="card-icon">💱</div>
+        <div class="card-content">
+          <h3>Currency</h3>
+          <div class="card-value">{{ overallSales[0]?.Currency || 'USD' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="data-section">
+      <div class="section-header">
+        <h2>Overall Sales Summary</h2>
+        <div class="refresh-btn" (click)="loadOverallSales()">
+          <span class="refresh-icon">🔄</span>
+          Refresh
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table" *ngIf="overallSales.length > 0">
+          <thead>
+            <tr>
+              <th>Total Count</th>
+              <th>Total Amount</th>
+              <th>Currency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sale of overallSales">
+              <td>{{ sale.TotalCount }}</td>
+              <td>{{ formatCurrency(sale.TotalAmount, sale.Currency) }}</td>
+              <td>{{ sale.Currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- No Data State -->
+        <div class="no-data" *ngIf="overallSales.length === 0">
+          <div class="no-data-icon">📈</div>
+          <h3>No Sales Data Available</h3>
+          <p>There are no overall sales records for this customer.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

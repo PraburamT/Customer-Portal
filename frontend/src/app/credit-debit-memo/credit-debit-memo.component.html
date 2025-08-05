@@ -1,0 +1,115 @@
+<div class="credit-debit-memo-container">
+  <!-- Header -->
+  <header class="credit-debit-memo-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
+      <h1>Credit/Debit Memo</h1>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="credit-debit-memo-main">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="summary-icon">📝</div>
+        <div class="summary-content">
+          <h3>Total Memos</h3>
+          <p>{{ totalMemos }}</p>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">💰</div>
+        <div class="summary-content">
+          <h3>Total Amount</h3>
+          <p>{{ formatCurrency(totalAmount.toString()) }}</p>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">👤</div>
+        <div class="summary-content">
+          <h3>Customer ID</h3>
+          <p>{{ customerId }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="filters-header">
+        <h2>Filters</h2>
+        <button class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+      </div>
+      <div class="filters-content">
+        <div class="filter-group">
+          <label for="currency-filter">Currency:</label>
+          <select id="currency-filter" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange()">
+            <option *ngFor="let currency of currencies" [value]="currency">
+              {{ currency }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Section -->
+    <div class="data-section">
+      <div class="section-header">
+        <h2>Credit/Debit Memo Details</h2>
+        <div class="header-actions">
+          <span class="filtered-count">Showing {{ filteredData.length }} of {{ creditDebitData.length }} records</span>
+          <span class="filtered-total">Filtered Total: {{ formatCurrency(filteredTotalAmount.toString()) }}</span>
+          <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+            🔄 Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-section">
+        <div class="loading-spinner"></div>
+        <p>Loading credit/debit memo data...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="errorMessage && !isLoading" class="error-section">
+        <div class="error-icon">⚠️</div>
+        <h3>Error Loading Data</h3>
+        <p>{{ errorMessage }}</p>
+        <button class="retry-btn" (click)="refreshData()">Retry</button>
+      </div>
+
+      <!-- Data Table -->
+      <div *ngIf="filteredData.length > 0 && !isLoading && !errorMessage" class="table-container">
+        <table class="credit-debit-memo-table">
+          <thead>
+            <tr>
+              <th>Memo No.</th>
+              <th>Date</th>
+              <th>Currency</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredData; trackBy: trackByVBELN">
+              <td>{{ item.VBELN }}</td>
+              <td>{{ formatDate(item.ERDAT) }}</td>
+              <td>{{ item.WAERK }}</td>
+              <td class="amount">{{ formatCurrencyWithSymbol(item.NETWR, item.WAERK) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Data State -->
+      <div *ngIf="filteredData.length === 0 && !isLoading && !errorMessage" class="no-data-section">
+        <div class="no-data-icon">📝</div>
+        <h3>No Credit/Debit Memo Data Available</h3>
+        <p *ngIf="creditDebitData.length > 0">No records match the current filters.</p>
+        <p *ngIf="creditDebitData.length === 0">There are no credit/debit memo records for this customer.</p>
+        <button *ngIf="creditDebitData.length > 0" class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+      </div>
+    </div>
+  </main>
+</div> 

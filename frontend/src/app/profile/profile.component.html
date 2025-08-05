@@ -1,0 +1,95 @@
+<div class="profile-container">
+  <!-- Header -->
+  <header class="profile-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
+      <h1>Customer Profile</h1>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="profile-main">
+    <div class="profile-card">
+      <div class="profile-header-section">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-info">
+          <h2>Customer ID: {{ customerId }}</h2>
+          <p>Profile Information</p>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-section">
+        <div class="loading-spinner"></div>
+        <p>Loading profile data...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="errorMessage" class="error-section">
+        <div class="error-icon">⚠️</div>
+        <h3>Error Loading Profile</h3>
+        <p>{{ errorMessage }}</p>
+        <div class="error-actions">
+          <button class="retry-btn" (click)="loadProfile()">Retry</button>
+          <button class="back-btn" (click)="goBack()">Back to Dashboard</button>
+        </div>
+      </div>
+
+      <!-- Profile Data -->
+      <div *ngIf="profileData && !isLoading && !errorMessage" class="profile-data">
+        <div class="data-section">
+          <h3>Profile Details</h3>
+          <div class="data-grid">
+            <div class="data-item">
+              <label>Customer ID:</label>
+              <span>{{ profileData.customerId }}</span>
+            </div>
+            
+            <div class="data-item">
+              <label>Name:</label>
+              <span>{{ profileData.name || 'Not Available' }}</span>
+            </div>
+            
+            <div class="data-item">
+              <label>Country:</label>
+              <span>{{ profileData.country || 'Not Available' }}</span>
+            </div>
+            
+            <div class="data-item">
+              <label>City:</label>
+              <span>{{ profileData.city || 'Not Available' }}</span>
+            </div>
+            
+            <div class="data-item">
+              <label>Street:</label>
+              <span>{{ profileData.street || 'Not Available' }}</span>
+            </div>
+            
+            <div class="data-item">
+              <label>Pincode:</label>
+              <span>{{ profileData.pincode || 'Not Available' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Raw XML Response (for debugging) -->
+        <!-- <div *ngIf="profileData.rawXml" class="data-section">
+          <h3>Raw XML Response</h3>
+          <div class="data-item">
+            <pre class="xml-preview">{{ profileData.rawXml }}</pre>
+          </div>
+        </div>
+      -->
+        </div> 
+
+      <!-- No Data State -->
+      <div *ngIf="!profileData && !isLoading && !errorMessage" class="no-data-section">
+        <div class="no-data-icon">📋</div>
+        <h3>No Profile Data Available</h3>
+        <p>Profile information could not be loaded.</p>
+        <button class="retry-btn" (click)="loadProfile()">Retry</button>
+      </div>
+    </div>
+  </main>
+</div> 

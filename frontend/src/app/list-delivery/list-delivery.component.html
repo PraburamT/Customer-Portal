@@ -1,0 +1,126 @@
+<div class="list-delivery-container">
+  <!-- Header -->
+  <header class="list-delivery-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
+      <h1>List of Delivery</h1>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="list-delivery-main">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="summary-icon">🚚</div>
+        <div class="summary-content">
+          <h3>Total Deliveries</h3>
+          <p>{{ totalDeliveries }}</p>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">📦</div>
+        <div class="summary-content">
+          <h3>Total Quantity</h3>
+          <p>{{ totalQuantity.toFixed(1) }}</p>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">👤</div>
+        <div class="summary-content">
+          <h3>Customer ID</h3>
+          <p>{{ customerId }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="filters-header">
+        <h2>Filters</h2>
+        <button class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+      </div>
+      <div class="filters-content">
+        <div class="filter-group">
+          <label for="material-filter">Material:</label>
+          <select id="material-filter" [(ngModel)]="selectedMaterial" (change)="onMaterialChange()">
+            <option *ngFor="let material of materials" [value]="material">
+              {{ material }}
+            </option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="unit-filter">Unit:</label>
+          <select id="unit-filter" [(ngModel)]="selectedUnit" (change)="onUnitChange()">
+            <option *ngFor="let unit of units" [value]="unit">
+              {{ unit }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Section -->
+    <div class="data-section">
+      <div class="section-header">
+        <h2>Delivery Details</h2>
+        <div class="header-actions">
+          <span class="filtered-count">Showing {{ filteredData.length }} of {{ deliveryData.length }} records</span>
+          <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+            🔄 Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-section">
+        <div class="loading-spinner"></div>
+        <p>Loading delivery data...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="errorMessage && !isLoading" class="error-section">
+        <div class="error-icon">⚠️</div>
+        <h3>Error Loading Data</h3>
+        <p>{{ errorMessage }}</p>
+        <button class="retry-btn" (click)="refreshData()">Retry</button>
+      </div>
+
+      <!-- Data Table -->
+      <div *ngIf="filteredData.length > 0 && !isLoading && !errorMessage" class="table-container">
+        <table class="delivery-table">
+          <thead>
+            <tr>
+              <th>Delivery No.</th>
+              <th>Date</th>
+              <th>Material</th>
+              <th>Description</th>
+              <th>Delivered Qty</th>
+              <th>Unit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredData; trackBy: trackByVBELN">
+              <td>{{ item.VBELN }}</td>
+              <td>{{ formatDate(item.ERDAT) }}</td>
+              <td>{{ item.MATNR }}</td>
+              <td>{{ item.ARKTX }}</td>
+              <td class="quantity">{{ formatQuantity(item.LFIMG) }}</td>
+              <td>{{ item.MEINS }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Data State -->
+      <div *ngIf="filteredData.length === 0 && !isLoading && !errorMessage" class="no-data-section">
+        <div class="no-data-icon">📋</div>
+        <h3>No Delivery Data Available</h3>
+        <p *ngIf="deliveryData.length > 0">No records match the current filters.</p>
+        <p *ngIf="deliveryData.length === 0">There are no delivery records for this customer.</p>
+        <button *ngIf="deliveryData.length > 0" class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+      </div>
+    </div>
+  </main>
+</div> 
